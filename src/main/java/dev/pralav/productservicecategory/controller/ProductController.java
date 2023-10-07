@@ -5,6 +5,7 @@ import dev.pralav.productservicecategory.dtos.ProductDto;
 import dev.pralav.productservicecategory.exceptions.NotFoundException;
 import dev.pralav.productservicecategory.models.Category;
 import dev.pralav.productservicecategory.models.Product;
+import dev.pralav.productservicecategory.repositories.ProductRepository;
 import dev.pralav.productservicecategory.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,11 @@ import java.util.Optional;
 public class ProductController {
 
     private ProductService productService;
-//    private ProductRepository productRepository;
+    private ProductRepository productRepository;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductRepository productRepository) {
         this.productService = productService;
+        this.productRepository = productRepository;
     }
 
     @GetMapping()
@@ -60,7 +62,7 @@ public class ProductController {
         newProduct.setPrice(product.getPrice());
         newProduct.setTitle(product.getTitle());
         newProduct.setDescription(product.getDescription());
-
+        newProduct = productRepository.save(newProduct);
         MultiValueMap<String, String> header = new LinkedMultiValueMap<>();
         header.add("auth-token", "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ.dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
         ResponseEntity<Product> response = new ResponseEntity(newProduct,header, HttpStatus.CREATED);
